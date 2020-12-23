@@ -1,5 +1,7 @@
 <?php
 
+include 'config/db_connect.php';
+
 $title = $email = $ingredients = '';
 
 $errors = [
@@ -40,8 +42,23 @@ if (isset($_POST['submit'])) {
     if (array_filter($errors)) {
         // echo 'Errors in the form';
     } else {
-        // echo 'Form is valid';
-        header('Location: index.php');
+
+        $email = mysqli_real_escape_string($conn, $_POST['email']);
+        $title = mysqli_real_escape_string($conn, $_POST['title']);
+        $ingredients = mysqli_real_escape_string($conn, $_POST['ingredients']);
+
+        // create sql
+        $sql = "INSERT INTO pizzas(title,email,ingredients) VALUES('$title', '$email', '$ingredients')";
+
+        // save to bd
+        if (mysqli_query($conn, $sql)) {
+            // success
+            header('Location: index.php');
+        } else {
+            // error
+            echo 'query error: ' . mysql_error($conn);
+        }
+
     }
 } //end of POST check
 ?>
